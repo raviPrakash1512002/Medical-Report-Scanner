@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Document Analyzer</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin: 20px;
+		}
+		.form-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			border: 1px solid #ccc;
+			padding: 20px;
+			margin-bottom: 20px;
+			width: 80%;
+			max-width: 800px;
+		}
+		input[type="file"] {
+			margin-bottom: 10px;
+		}
+		button[type="submit"] {
+			background-color: #4CAF50;
+			color: white;
+			padding: 10px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		.result-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			border: 1px solid #ccc;
+			padding: 20px;
+			width: 80%;
+			max-width: 800px;
+		}
+		.result-link {
+			margin-top: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Document Analyzer</h1>
+		<div class="form-container">
+			<form id="upload-form" method="post" enctype="multipart/form-data">
+				<label for="image-file">Select an image file:</label>
+				<input type="file" id="image-file" name="image-file">
+				<label for="pdf-file">Select a PDF file:</label>
+				<input type="file" id="pdf-file" name="pdf-file">
+				<button type="submit">Analyze</button>
+			</form>
+		</div>
+		<div class="result-container">
+			<h2>Analysis Result</h2>
+			<p id="result-text"></p>
+			<a id="result-link" href="#" download>Download Result PDF</a>
+		</div>
+	</div>
+
+	<script>
+		const form = document.getElementById('upload-form');
+		const resultContainer = document.querySelector('.result-container');
+		const resultText = document.getElementById('result-text');
+		const resultLink = document.getElementById('result-link');
+
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const formData = new FormData(form);
+			try {
+				const response = await fetch('/analyze', {
+					method: 'POST',
+					body: formData
+				});
+				const data = await response.json();
+				if (data.success) {
+					resultText.textContent = 'Analysis complete. Click the download link below to download the result PDF.';
+					resultLink.href = `/download/${data.result}`;
+					resultLink.style.display = 'block';
+				} else {
+					resultText.textContent = 'Analysis failed.';
+					resultLink.style.display = 'none';
+				}
+			} catch (err) {
+				console.error(err);
+				resultText.textContent = 'An error occurred.';
+				resultLink.style.display = 'none';
+			}
+			resultContainer.style.display = 'block';
+		});
+	</script>
+</body>
+</html>
+
