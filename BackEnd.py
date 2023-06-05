@@ -5,8 +5,8 @@ from PIL import Image
 
 
 session = boto3.Session(
-    aws_access_key_id='AKIATTWE4TOCJJKUAIV5',
-    aws_secret_access_key='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',
+    aws_access_key_id='',
+    aws_secret_access_key='',
     region_name='ap-south-1'
 )
 client =session.client('textract')
