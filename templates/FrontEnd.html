@@ -37,7 +37,6 @@
 			cursor: pointer;
 		}
 		.result-container {
-			display: flex;
 			flex-direction: column;
 			align-items: center;
 			border: 1px solid #ccc;
@@ -55,17 +54,14 @@
 		<h1>Document Analyzer</h1>
 		<div class="form-container">
 			<form id="upload-form" method="post" enctype="multipart/form-data">
-				<label for="image-file">Select an image file:</label>
-				<input type="file" id="image-file" name="image-file">
-				<label for="pdf-file">Select a PDF file:</label>
-				<input type="file" id="pdf-file" name="pdf-file">
+					<input type="file" id="file-input" name="file" accept=".png, .jpg, .jpeg, .tiff, .pdf">
 				<button type="submit">Analyze</button>
 			</form>
 		</div>
 		<div class="result-container">
 			<h2>Analysis Result</h2>
 			<p id="result-text"></p>
-			<a id="result-link" href="#" download>Download Result PDF</a>
+			<a id="result-link" href="/download" download>Download Result PDF</a>
 		</div>
 	</div>
 
@@ -74,32 +70,22 @@
 		const resultContainer = document.querySelector('.result-container');
 		const resultText = document.getElementById('result-text');
 		const resultLink = document.getElementById('result-link');
+		const fileInput = document.getElementById('file-input');
 
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			const formData = new FormData(form);
-			try {
-				const response = await fetch('/analyze', {
+			const file = fileInput.files[0];
+			const formData = new FormData();
+			formData.append('file', file);
+                const response = await fetch('/analyze', {
 					method: 'POST',
 					body: formData
 				});
 				const data = await response.json();
-				if (data.success) {
-					resultText.textContent = 'Analysis complete. Click the download link below to download the result PDF.';
-					resultLink.href = `/download/${data.result}`;
-					resultLink.style.display = 'block';
-				} else {
-					resultText.textContent = 'Analysis failed.';
-					resultLink.style.display = 'none';
-				}
-			} catch (err) {
-				console.error(err);
-				resultText.textContent = 'An error occurred.';
-				resultLink.style.display = 'none';
-			}
+				resultText.textContent = 'Analysis complete. Click the download link below to download the result Excel.';
+				resultLink.style.display = 'block';
 			resultContainer.style.display = 'block';
 		});
 	</script>
 </body>
 </html>
-
